@@ -1,11 +1,10 @@
-use itertools::join;
 use num_bigint::BigUint;
 use std::cmp::Ordering;
 use std::fmt;
 use std::fmt::{Display, Formatter};
 
 /// A single token in a version spec. For example, "1" or "foo".
-#[derive(Debug, Hash)]
+#[derive(Debug, Hash, Clone)]
 pub(super) enum Item {
     Int(u32),
     BigInt(BigUint),
@@ -124,7 +123,7 @@ impl Ord for Item {
 /// A segment of Items that auto-normalizes its contents. One segment looks something like "1.0.0",
 /// "foo", "foo.bar", or "1.foo.bar". `last_segment` is whether we are the last segment. This is
 /// needed for comparison purposes because Maven is weird.
-#[derive(Debug, Hash)]
+#[derive(Debug, Hash, Clone)]
 pub(super) struct Segment {
     items: Vec<Item>,
     last_segment: bool,
@@ -170,7 +169,14 @@ impl Segment {
 
 impl Display for Segment {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        f.write_str(&join(self.items.iter().map(|i| i.to_string()), "."))
+        f.write_str(
+            &self
+                .items
+                .iter()
+                .map(|i| i.to_string())
+                .collect::<Vec<String>>()
+                .join("."),
+        )
     }
 }
 

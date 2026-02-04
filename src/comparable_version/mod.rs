@@ -9,10 +9,10 @@ mod item;
 
 use item::Item;
 use item::Segment;
-use itertools::join;
 use std::cmp::Ordering;
 use std::fmt;
 use std::fmt::{Display, Formatter};
+use std::hash::{Hash, Hasher};
 use std::str::{from_utf8_unchecked, FromStr};
 
 /// This is an implementation of Maven's ComparableVersion.
@@ -40,9 +40,9 @@ use std::str::{from_utf8_unchecked, FromStr};
 /// Other qualifiers are ordered lexically.
 ///
 /// To compare ComparableVersions, use the built-in comparison and equality operators.
-#[derive(Debug, Hash)]
+#[derive(Debug, Eq, Clone)]
 pub struct ComparableVersion {
-    orig: String,
+    pub(crate) orig: String,
     segments: Vec<Segment>,
 }
 
@@ -63,12 +63,6 @@ impl<'de> serde::Deserialize<'de> for ComparableVersion {
         D: serde::Deserializer<'de>,
     {
         Ok(Self::new(&<String as serde::Deserialize>::deserialize(deserializer)?))
-    }
-}
-
-impl Display for ComparableVersion {
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        f.write_str(&self.orig)
     }
 }
 
@@ -187,7 +181,23 @@ impl ComparableVersion {
     /// assert_eq!(a.canonical(), "1-alpha-1");
     /// ```
     pub fn canonical(&self) -> String {
-        join(self.segments.iter().map(|s| s.to_string()), "-")
+        self.segments
+            .iter()
+            .map(|s| s.to_string())
+            .collect::<Vec<String>>()
+            .join("-")
+    }
+}
+
+impl Display for ComparableVersion {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        f.write_str(&self.orig)
+    }
+}
+
+impl Hash for ComparableVersion {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.segments.hash(state)
     }
 }
 
@@ -196,8 +206,6 @@ impl PartialEq for ComparableVersion {
         self.segments == other.segments
     }
 }
-
-impl Eq for ComparableVersion {}
 
 impl PartialOrd for ComparableVersion {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {

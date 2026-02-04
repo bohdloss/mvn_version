@@ -1,4 +1,4 @@
-//! This is just all of maven's test cases.
+//! Directly lifted from Maven's test cases.
 
 use itertools::Itertools;
 use mvn_version::ComparableVersion;
