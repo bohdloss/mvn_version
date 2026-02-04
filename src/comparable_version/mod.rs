@@ -46,6 +46,25 @@ pub struct ComparableVersion {
     segments: Vec<Segment>,
 }
 
+#[cfg(feature = "serde")]
+impl serde::Serialize for ComparableVersion {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer
+    {
+        self.orig.serialize(serializer)
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for ComparableVersion {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        Ok(Self::new(&<String as serde::Deserialize>::deserialize(deserializer)?))
+    }
+}
+
 impl Display for ComparableVersion {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         f.write_str(&self.orig)

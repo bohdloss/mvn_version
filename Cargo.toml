@@ -1,6 +1,6 @@
 [package]
 name = "mvn_version"
-version = "0.0.0"
+version = "0.1.1"
 authors = ["Moses Miller <Majora320@gmail.com>"]
 description = "An implementation of Maven's ComparableVersion and VersionRange"
 repository = "https://github.com/Majora320/mvn_version"
@@ -11,5 +11,6 @@ categories = ["parser-implementations"]
 edition = "2018"
 
 [dependencies]
-itertools = "0.10"
+itertools = "0.14.0"
 num-bigint = "0.4"
+serde = { version = "1.0", default-features = false, features = ["alloc"], optional = true }
