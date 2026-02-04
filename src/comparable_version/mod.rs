@@ -56,6 +56,7 @@ impl serde::Serialize for ComparableVersion {
     }
 }
 
+#[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for ComparableVersion {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
