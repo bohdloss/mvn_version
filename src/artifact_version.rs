@@ -267,6 +267,18 @@ impl ArtifactVersion {
     pub fn qualifier(&self) -> &Option<String> {
         &self.qualifier
     }
+
+    /// Returns the original string representation of the version, the same as the one passed as
+    /// the argument to [`Self::new`]
+    pub fn as_str(&self) -> &str {
+        &self.comparable.orig
+    }
+}
+
+impl AsRef<str> for ArtifactVersion {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
 }
 
 impl Display for ArtifactVersion {

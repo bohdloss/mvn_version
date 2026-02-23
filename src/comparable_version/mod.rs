@@ -187,6 +187,18 @@ impl ComparableVersion {
             .collect::<Vec<String>>()
             .join("-")
     }
+
+    /// Returns the original string representation of the version, the same as the one passed as
+    /// the argument to [`Self::new`]
+    pub fn as_str(&self) -> &str {
+        &self.orig
+    }
+}
+
+impl AsRef<str> for ComparableVersion {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
 }
 
 impl Display for ComparableVersion {
